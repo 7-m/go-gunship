@@ -1,7 +1,7 @@
 package execution
 
 import (
-	"gunship/execution"
+	"gunship"
 	"net/http"
 )
 
@@ -14,7 +14,7 @@ func NewHttpExchanger(client *http.Client) *httpExchanger {
 }
 
 
-func (h *httpExchanger) Exchange(request execution.CompiledRequest) (interface{}, error) {
+func (h *httpExchanger) Exchange(request gunship.CompiledRequest) (interface{}, error) {
 	r := request.(*HttpCompiledRequest)
 	return h.client.Do(r.ToHttpRequest())
 }

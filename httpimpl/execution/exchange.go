@@ -1,7 +1,7 @@
 package execution
 
 import (
-	"gunship/correlators"
+	"gunship"
 )
 
 // HttpRawExchange represent a pair of raw HTTP request and response
@@ -10,11 +10,11 @@ type HttpRawExchange struct {
 	Response *HttpRawResponse
 }
 
-func (h *HttpRawExchange) RawRequest() correlators.RawRequest {
+func (h *HttpRawExchange) RawRequest() gunship.RawRequest {
 	return h.Request
 }
 
-func (h *HttpRawExchange) RawResponse() correlators.RawResponse {
+func (h *HttpRawExchange) RawResponse() gunship.RawResponse {
 	return h.Response
 }
 

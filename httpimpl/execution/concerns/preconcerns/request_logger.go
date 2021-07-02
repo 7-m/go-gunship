@@ -2,7 +2,7 @@ package preconcerns
 
 import (
 	"fmt"
-	"gunship/execution"
+	"gunship"
 	execution2 "gunship/httpimpl/execution"
 )
 
@@ -15,7 +15,7 @@ func NewHttpRequestLogger() *requestLogger {
 }
 
 
-func (r *requestLogger) ProcessRequest(req execution.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
+func (r *requestLogger) ProcessRequest(req gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
 	fmt.Println(req.(*execution2.HttpCompiledRequest).Path);
 }
 

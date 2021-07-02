@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/gob"
 	"encoding/json"
-	"gunship/correlators"
-	"gunship/execution"
+	"gunship"
+	"gunship/utils"
 	"io/ioutil"
 	"net/http"
 )
@@ -18,6 +18,7 @@ func init() {
 // to a valid http.Request. Always MakeCopy() and then call its request processors so as to
 // not modify the original template
 
+
 type HttpCompiledRequest struct {
 	Method              string
 	BaseUrl             string
@@ -25,25 +26,34 @@ type HttpCompiledRequest struct {
 	Query               map[string][]string
 	Headers             map[string][]string
 	// perform template replacements and other actions here
-	RequestProcessors_ []execution.RequestProcessor
+	RequestProcessors_ []gunship.ExecutionRequestProcessor
 	// perform data extractions actions here
-	ResponseProcessors_ []execution.ResponseProcessor
+	ResponseProcessors_ []gunship.ExecutionResponseProcessor
 	Body                string
+	ErrorHandler        gunship.ErrorHandler
 	//// perform cross cutting actions just before a request is send
 	//// and just after a response is recieved below
-	//PreRequestActions   []RequestProcessor
-	//PostResponseActions []ResponseProcessor
+	//PreRequestActions   []ExecutionRequestProcessor
+	//PostResponseActions []ExecutionResponseProcessor
 }
 
-func (this HttpCompiledRequest) RequestProcessors() []execution.RequestProcessor {
+func (this *HttpCompiledRequest) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultHandler gunship.ErrorHandler) {
+	if this.ErrorHandler != nil{
+		this.ErrorHandler.HandleError(e, xchgCtx, ctx, defaultHandler)
+	}else {
+		defaultHandler.HandleError(e,xchgCtx,ctx,nil)
+	}
+}
+
+func (this HttpCompiledRequest) RequestProcessors() []gunship.ExecutionRequestProcessor {
 	return this.RequestProcessors_
 }
 
-func (this HttpCompiledRequest) ResponseProcessorProcessors() []execution.ResponseProcessor {
+func (this HttpCompiledRequest) ResponseProcessorProcessors() []gunship.ExecutionResponseProcessor {
 	return this.ResponseProcessors_
 }
 
-func FromExchange(e correlators.RawExchange) execution.CompiledRequest {
+func FromExchange(e gunship.RawExchange, template *gunship.Template) gunship.CompiledRequest {
 	exchange := e.(*HttpRawExchange)
 	req := exchange.Request
 	resp := exchange.Response
@@ -57,6 +67,7 @@ func FromExchange(e correlators.RawExchange) execution.CompiledRequest {
 		Body:                req.Body,
 		RequestProcessors_:  req.RequestProcessors_,
 		ResponseProcessors_: resp.After,
+		ErrorHandler: template.ErrorCallback(),
 	}
 
 }
@@ -88,7 +99,7 @@ func (this HttpCompiledRequest) ToHttpRequest() *http.Request {
 
 }
 
-func (this HttpCompiledRequest) MakeCopy() execution.CompiledRequest {
+func (this HttpCompiledRequest) MakeCopy() gunship.CompiledRequest {
 	cpy := &HttpCompiledRequest{
 		Body:                this.Body,
 		Method:              this.Method,
@@ -98,6 +109,7 @@ func (this HttpCompiledRequest) MakeCopy() execution.CompiledRequest {
 		Headers:             nil,
 		RequestProcessors_:  this.RequestProcessors_,
 		ResponseProcessors_: this.ResponseProcessors_,
+		ErrorHandler  : this.ErrorHandler,
 	}
 
 	query := map[string][]string{}
@@ -139,11 +151,9 @@ func (this *HttpCompiledRequest) ToJson() string {
 	return string(str)
 }
 
-func CompiledRequestsToJson(compiledrequests []execution.CompiledRequest) []byte {
+func CompiledRequestsToJson(compiledrequests []gunship.CompiledRequest) []byte {
 	str, err := json.MarshalIndent(compiledrequests, "", " ")
-	if err != nil {
-		panic("error  converting to json")
-	}
+	utils.Panic(err, "error converting json")
 	return str
 
 }

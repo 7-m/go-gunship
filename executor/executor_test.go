@@ -1,38 +1,56 @@
 package executor
 
 import (
-	"github.com/tidwall/gjson"
+	"fmt"
+	"gunship"
+	"gunship/httpimpl/execution"
 	"testing"
 )
 
-func Test_gjson(t *testing.T) {
-	blob := `
-{
-	"cat": "12",
-	"subcat": "12009",
-	"dims": [
-		{
-			"id": "10328",
-			"dim": "1000 X 50 X 50"
-		},
-		{
-			"id": "10605",
-			"dim": "1000 X 50 X 50"
-		},
-		{
-			"id": "10342",
-			"dim": "1000 X 50 X 50"
-		},
-		{
-			"id": "10340",
-			"dim": "1200 X 50 X 50"
+func Test_defaultHanlder(t *testing.T) {
+
+	defer func() {
+		r :=  recover().(error)
+		if r.Error() != "NotFound" {
+			t.Fail()
 		}
-	],
-}
-`
-	if gjson.Get(blob, "dims.1.id").String() != "10605" {
-		t.Fail()
-	}
+	}()
+	mock := &mock{}
+	defaultHandler := &defaultErrorHanlder{}
+	req := &execution.HttpCompiledRequest{}
+	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler)
+
 }
 
+func Test_requestHandler(t *testing.T){
+	defer func() {
+		r :=  recover().(error)
+		if r.Error() != "something went wrong: NotFound" {
+			t.Fail()
+		}
+	}()
+	mock := &mock{}
+	defaultHandler := &defaultErrorHanlder{}
+	req := &execution.HttpCompiledRequest{
+		ErrorHandler: mock,
+	}
+	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler)
+}
+
+// default error handler
+type defaultErrorHanlder struct {}
+
+func (d *defaultErrorHanlder) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+	panic(e)
+}
+
+type mock struct {}
+// request error handler
+func (m *mock) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+	panic(fmt.Errorf("something went wrong: "+e.Error()))
+}
+
+func (m *mock) Exchange(request gunship.CompiledRequest) (interface{}, error) {
+	return nil, fmt.Errorf("NotFound")
+}
 

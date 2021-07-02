@@ -1,14 +1,12 @@
-package correlators
-
-import "gunship/execution"
+package gunship
 
 type RawRequest interface {
-	AddRequestProcessor(processor execution.RequestProcessor)
-	RequestProcessors() []execution.RequestProcessor
+	AddRequestProcessor(processor ExecutionRequestProcessor)
+	RequestProcessors() []ExecutionRequestProcessor
 }
 type RawResponse interface {
-	AddResponseProcessor(processor execution.ResponseProcessor)
-	ResponseProcessors() []execution.ResponseProcessor
+	AddResponseProcessor(processor ExecutionResponseProcessor)
+	ResponseProcessors() []ExecutionResponseProcessor
 }
 
 type RawExchange interface {

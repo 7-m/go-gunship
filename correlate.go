@@ -1,17 +1,14 @@
 package gunship
 
-import (
-	"gunship/correlators"
-	"gunship/execution"
-)
-
-type ExchangeCompilerFunc func(exchange correlators.RawExchange) execution.CompiledRequest
+type ExchangeCompilerFunc func(exchange RawExchange, template *Template) CompiledRequest
 // Correlate accepts set of exchanges and correlator.Templates and applies the templates to the
 // exchanges. It then tranforms the exchanges to compiled requests
-func Correlate(exchanges []correlators.RawExchange, templates []*correlators.Template,ctx map[string]map[string]string, exchangeCompiler ExchangeCompilerFunc) []execution.CompiledRequest {
-	compiledRequests := []execution.CompiledRequest{}
+func Correlate(exchanges []RawExchange,
+	templates []*Template,ctx map[string]map[string]string,
+	exchangeCompiler ExchangeCompilerFunc) []CompiledRequest {
+	compiledRequests := []CompiledRequest{}
 
-	for _, exchange := range exchanges{
+	NextExchange : for _, exchange := range exchanges{
 		for _, tmplt :=range templates {
 			if tmplt.Matches(exchange){
 				for _, pre := range tmplt.RequestProcessors(){
@@ -20,9 +17,11 @@ func Correlate(exchanges []correlators.RawExchange, templates []*correlators.Tem
 				for _, post := range tmplt.ResponseProcessors() {
 					post.ProcessResponse(exchange.RawResponse(), ctx)
 				}
+				compiledRequests = append(compiledRequests, exchangeCompiler(exchange, tmplt))
+				continue NextExchange
 			}
 		}
-		compiledRequests = append(compiledRequests, exchangeCompiler(exchange))
+
 	}
 	return compiledRequests
 	

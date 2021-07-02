@@ -1,7 +1,7 @@
 package execution
 
 import (
-	"gunship/execution"
+	"gunship"
 	"gunship/utils"
 	"io/ioutil"
 	"net/http"
@@ -20,15 +20,15 @@ type HttpRawRequest struct {
 	Body    string
 	// requestProcessors and responseProcessors action to perfrom requestProcessors
 	// and responseProcessors execution of the actual http request
-	RequestProcessors_ []execution.RequestProcessor
+	RequestProcessors_ []gunship.ExecutionRequestProcessor
 }
 
-func (h *HttpRawRequest) AddRequestProcessor(processor execution.RequestProcessor) {
+func (h *HttpRawRequest) AddRequestProcessor(processor gunship.ExecutionRequestProcessor) {
 	h.RequestProcessors_ = append(h.RequestProcessors_, processor)
 
 }
 
-func (h HttpRawRequest) RequestProcessors() []execution.RequestProcessor {
+func (h HttpRawRequest) RequestProcessors() []gunship.ExecutionRequestProcessor {
 	return h.RequestProcessors_
 }
 
@@ -45,7 +45,7 @@ func NewRawRequest(r *http.Request) *HttpRawRequest {
 		Path:               r.URL.Path,
 		Query:              r.URL.Query(),
 		Headers:            r.Header,
-		RequestProcessors_: []execution.RequestProcessor{},
+		RequestProcessors_: []gunship.ExecutionRequestProcessor{},
 		Body:               string(all),
 	}
 }
@@ -61,7 +61,7 @@ type rawRequestBuilder struct {
 	Body    string
 	// requestProcessors and responseProcessors action to perfrom requestProcessors
 	// and responseProcessors execution of the actual http request
-	RequestProcessors []execution.RequestProcessor
+	RequestProcessors []gunship.ExecutionRequestProcessor
 }
 
 
@@ -73,7 +73,7 @@ func RawRequestBuilder() *rawRequestBuilder {
 		Query:             map[string][]string{},
 		Headers:           map[string][]string{},
 		Body:              "",
-		RequestProcessors: []execution.RequestProcessor{},
+		RequestProcessors: []gunship.ExecutionRequestProcessor{},
 	}
 }
 func (r *rawRequestBuilder) SetMethod(method string) *rawRequestBuilder {
@@ -107,7 +107,7 @@ func (r *rawRequestBuilder) SetBody(body string) *rawRequestBuilder {
 	r.Body = body
 	return r
 }
-func (r *rawRequestBuilder) AddRequestProcessor(processor execution.RequestProcessor) *rawRequestBuilder {
+func (r *rawRequestBuilder) AddRequestProcessor(processor gunship.ExecutionRequestProcessor) *rawRequestBuilder {
 	r.RequestProcessors = append(r.RequestProcessors, processor)
 	return r
 }

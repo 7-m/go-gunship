@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func GetExhchanges1(baseUrl string) []*template2.HttpRawExchange {
+func GetExhchanges1() []*template2.HttpRawExchange {
 	// login test
 	login := template2.RawRequestBuilder().
 		SetBaseUrl("http://example.com").

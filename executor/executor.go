@@ -2,16 +2,17 @@ package executor
 
 import (
 	"fmt"
-	"gunship/execution"
+	"gunship"
 	"sync"
 )
 
 type Exchanger interface {
-	Exchange(request execution.CompiledRequest)(interface{}, error)
+	Exchange(request gunship.CompiledRequest)(interface{}, error)
 }
 
-func Execute(compiledRequests []execution.CompiledRequest, exchanger Exchanger,
-	preConcerns []execution.RequestProcessor, postConcerns []execution.ResponseProcessor)  {
+func Execute(compiledRequests []gunship.CompiledRequest, exchanger Exchanger,
+	preConcerns []gunship.ExecutionRequestProcessor, postConcerns []gunship.ExecutionResponseProcessor,
+	defaultHandler gunship.ErrorHandler)  {
 	sessionCtx := map[string]interface{}{}
 
 	// todo add ctx init to method
@@ -21,22 +22,23 @@ func Execute(compiledRequests []execution.CompiledRequest, exchanger Exchanger,
 
 		reqCpy := e.MakeCopy()
 		// perform request processing and prerequest actions
-		reqCpy.ProcessRequest(nil, sessionCtx)
+		xchng := map[string]interface{}{}
+		reqCpy.ProcessRequest(xchng, sessionCtx)
 		for _, b:= range preConcerns {
-			b.ProcessRequest(reqCpy, nil, sessionCtx)
+			b.ProcessRequest(reqCpy, xchng, sessionCtx)
 		}
 
-
 		response, err := exchanger.Exchange(reqCpy)
+
 		if err != nil {
-			panic(fmt.Sprintf("an error occured while executing request: %v", err))
+			reqCpy.HandleError(err, xchng, sessionCtx, defaultHandler)
 		}
 
 		// perform post processing and postresponse actions
 		for _,a := range postConcerns {
-			a.ProcessResponse(response, nil, sessionCtx)
+			a.ProcessResponse(response, xchng, sessionCtx)
 		}
-		reqCpy.ProcessResponse(response, nil, sessionCtx)
+		reqCpy.ProcessResponse(response, xchng, sessionCtx)
 
 	}
 
@@ -45,8 +47,9 @@ func Execute(compiledRequests []execution.CompiledRequest, exchanger Exchanger,
 
 type ExchangerFactory func()Exchanger
 
-func ExecuteParallel(compiledRequests []execution.CompiledRequest, getHttpExchanger ExchangerFactory,
-	preConcerns []execution.RequestProcessor, postConcerns []execution.ResponseProcessor,  parallelism int){
+func ExecuteParallel(compiledRequests []gunship.CompiledRequest, getHttpExchanger ExchangerFactory,
+	preConcerns []gunship.ExecutionRequestProcessor, postConcerns []gunship.ExecutionResponseProcessor,
+	parallelism int, defaultHandler gunship.ErrorHandler){
 
 	group := sync.WaitGroup{}
 	for i := 0; i < parallelism; i++ {
@@ -54,7 +57,7 @@ func ExecuteParallel(compiledRequests []execution.CompiledRequest, getHttpExchan
 		go func() {
 			fmt.Printf("------------------------------------started-----------------------")
 
-			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns)
+			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns, defaultHandler)
 			group.Done()
 		}()
 

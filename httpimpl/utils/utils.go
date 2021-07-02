@@ -1,21 +1,20 @@
 package utils
 
 import (
-	"gunship/correlators"
-	"gunship/execution"
+	"gunship"
 	execution2 "gunship/httpimpl/execution"
 )
 
-func CastToCompiledRequest(uncasted []*execution2.HttpCompiledRequest)[]execution.CompiledRequest{
-	compiledRequests := []execution.CompiledRequest{}
+func CastToCompiledRequest(uncasted []*execution2.HttpCompiledRequest)[]gunship.CompiledRequest {
+	compiledRequests := []gunship.CompiledRequest{}
 	for _, e := range uncasted {
 		compiledRequests = append(compiledRequests, e)
 	}
 	return compiledRequests
 }
 
-func CastListToRawExchanges(uncasted []*execution2.HttpRawExchange)[]correlators.RawExchange{
-	compiledRequests := []correlators.RawExchange{}
+func CastListToRawExchanges(uncasted []*execution2.HttpRawExchange)[]gunship.RawExchange {
+	compiledRequests := []gunship.RawExchange{}
 	for _, e := range uncasted {
 		compiledRequests = append(compiledRequests, e)
 	}

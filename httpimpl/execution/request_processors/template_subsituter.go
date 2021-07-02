@@ -4,7 +4,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
-	"gunship/execution"
+	"gunship"
 	template2 "gunship/httpimpl/execution"
 	"strings"
 )
@@ -28,7 +28,7 @@ func NewTemplateCompiler() *templateCompiler {
 	return &templateCompiler{}
 }
 
-func (t *templateCompiler) ProcessRequest(request execution.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{})  {
+func (t *templateCompiler) ProcessRequest(request gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{})  {
 	r:= request.(*template2.HttpCompiledRequest)
 	Ctx :=sessionCtx["template"].(map[string]string)
 	// replace in path, header and body

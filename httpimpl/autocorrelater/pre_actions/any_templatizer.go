@@ -1,7 +1,7 @@
 package pre_actions
 
 import (
-	"gunship/correlators"
+	"gunship"
 	template2 "gunship/httpimpl/execution"
 	request_processors2 "gunship/httpimpl/execution/request_processors"
 	"strings"
@@ -15,7 +15,7 @@ func NewAnyTemplater() *anyTemplater {
 }
 
 
-func (this *anyTemplater) ProcessRequest(request correlators.RawRequest, ctx map[string]map[string]string) {
+func (this *anyTemplater) ProcessRequest(request gunship.RawRequest, ctx map[string]map[string]string) {
 	req := request.(*template2.HttpRawRequest)
 	for _, literalsMap := range ctx {
 		for literal, tmpltName := range literalsMap {

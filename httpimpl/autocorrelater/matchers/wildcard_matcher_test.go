@@ -2,17 +2,21 @@ package matchers
 
 import (
 	template2 "gunship/httpimpl/execution"
-	"net/http"
 	"testing"
 )
 
 func TestSplitMatcher_Matcher(t *testing.T) {
 	// TODO add test cases with trailing slashes
 	mathcer := NewWildcardMatcher("/api/v1/{cid}")
-
-	req, _ := http.NewRequest("", "https://www.some.com/api/v1/123?cat=purr&cat=mew&dog=woof", nil)
-	rawRequest := template2.NewRawRequest(req)
-	if !mathcer.Match(rawRequest) {
+	// cat=purr&cat=mew&dog=woof
+	rawRequest := template2.RawRequestBuilder().
+		SetPath("/api/v1/123").
+		SetBaseUrl("https://www.some.com").
+		SetQuery(map[string][]string{"cat" :{"purr", "mew"}, "dog" :{"woof"}}).
+		Build()
+	if !mathcer.Match(&template2.HttpRawExchange{
+		Request: rawRequest,
+	}) {
 		t.Fail()
 	}
 

@@ -2,7 +2,7 @@ package post_actions
 
 import (
 	"github.com/tidwall/gjson"
-	"gunship/correlators"
+	"gunship"
 	template2 "gunship/httpimpl/execution"
 	response_processors2 "gunship/httpimpl/execution/response_processors"
 	"gunship/utils"
@@ -19,7 +19,7 @@ func NewJsonCorrelator(extractors map[string]string) *jsonCorrelator {
 }
 
 // ctx : variable -> value->variableN
-func (this *jsonCorrelator) ProcessResponse(response correlators.RawResponse, ctx map[string]map[string]string) {
+func (this *jsonCorrelator) ProcessResponse(response gunship.RawResponse, ctx map[string]map[string]string) {
 	resp := response.(*template2.HttpRawResponse)
 	json := resp.Body
 	templateVars := map[string]string{}

@@ -1,7 +1,7 @@
 package pre_actions
 
 import (
-	"gunship/correlators"
+	"gunship"
 	template2 "gunship/httpimpl/execution"
 	"gunship/utils"
 	"strconv"
@@ -17,7 +17,7 @@ func NewUrlExtractor(tokeizer string) *urlExtractor {
 	return &urlExtractor{utils.NewUrlTokenzier(tokeizer)}
 }
 
-func (u urlExtractor) ProcessRequest(r correlators.RawRequest, ctx map[string]map[string]string) {
+func (u urlExtractor) ProcessRequest(r gunship.RawRequest, ctx map[string]map[string]string) {
 	// req has the url values
 	// /api/endpoint/xxxx-yyyy-zzzz
 	// /api/endpoint/{value}

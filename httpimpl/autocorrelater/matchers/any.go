@@ -1,13 +1,13 @@
 package matchers
 
 import (
-	"gunship/correlators"
+	"gunship"
 )
 
 type AnyMatcher struct {
 
 }
 
-func (this AnyMatcher) Match(exchange correlators.RawExchange) bool {
+func (this AnyMatcher) Match(exchange gunship.RawExchange) bool {
 	return true
 }

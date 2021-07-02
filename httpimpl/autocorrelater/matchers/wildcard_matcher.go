@@ -1,7 +1,7 @@
 package matchers
 
 import (
-	"gunship/correlators"
+	"gunship"
 	template2 "gunship/httpimpl/execution"
 	request_processors2 "gunship/httpimpl/execution/request_processors"
 	"gunship/utils"
@@ -21,7 +21,7 @@ func NewWildcardMatcher(pattern string) *wildcardMatcher {
 	return &wildcardMatcher{utils.NewUrlTokenzier(pattern)}
 }
 
-func (this *wildcardMatcher) Match(exchange correlators.RawExchange) bool {
+func (this *wildcardMatcher) Match(exchange gunship.RawExchange) bool {
 	req:= exchange.(*template2.HttpRawExchange).Request
 	// match with just url
 	reqAtoms := strings.Split(req.Path[1:], "/")

@@ -1,7 +1,7 @@
 package execution
 
 import (
-	"gunship/execution"
+	"gunship"
 	"gunship/utils"
 	"io/ioutil"
 	"net/http"
@@ -12,14 +12,14 @@ import (
 type HttpRawResponse struct {
 	Headers map[string][]string
 	Body    string
-	After   []execution.ResponseProcessor
+	After   []gunship.ExecutionResponseProcessor
 }
 
-func (h *HttpRawResponse) AddResponseProcessor(processor execution.ResponseProcessor) {
+func (h *HttpRawResponse) AddResponseProcessor(processor gunship.ExecutionResponseProcessor) {
 	h.After = append(h.After, processor)
 }
 
-func (h *HttpRawResponse) ResponseProcessors() []execution.ResponseProcessor {
+func (h *HttpRawResponse) ResponseProcessors() []gunship.ExecutionResponseProcessor {
 	return h.After
 }
 
@@ -28,7 +28,7 @@ func (h *HttpRawResponse) RawResponse() {
 }
 
 func NewRawResponse(headers map[string][]string, body string) *HttpRawResponse {
-	return &HttpRawResponse{Headers: headers, Body: body, After: []execution.ResponseProcessor{}}
+	return &HttpRawResponse{Headers: headers, Body: body, After: []gunship.ExecutionResponseProcessor{}}
 
 }
 
@@ -46,14 +46,14 @@ func RawResponseFromHttp(response *http.Response) *HttpRawResponse {
 type rawResponseBuilder struct {
 	Headers map[string][]string
 	Body    string
-	After   []execution.ResponseProcessor
+	After   []gunship.ExecutionResponseProcessor
 }
 
 func RawResponseBuilder() *rawResponseBuilder {
 	return &rawResponseBuilder{
 		Headers: map[string][]string{},
 		Body:    "",
-		After:   []execution.ResponseProcessor{},
+		After:   []gunship.ExecutionResponseProcessor{},
 	}
 }
 func (this *rawResponseBuilder) SetBody(body string) *rawResponseBuilder {
