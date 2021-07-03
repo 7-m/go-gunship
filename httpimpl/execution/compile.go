@@ -37,11 +37,11 @@ type HttpCompiledRequest struct {
 	//PostResponseActions []ExecutionResponseProcessor
 }
 
-func (this *HttpCompiledRequest) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultHandler gunship.ErrorHandler) {
+func (this *HttpCompiledRequest) HandleError(e error, resp interface{}, xchgCtx, ctx map[string]interface{}, defaultHandler gunship.ErrorHandler) {
 	if this.ErrorHandler != nil{
-		this.ErrorHandler.HandleError(e, xchgCtx, ctx, defaultHandler)
+		this.ErrorHandler.HandleError(e, resp, xchgCtx, ctx, defaultHandler)
 	}else {
-		defaultHandler.HandleError(e,xchgCtx,ctx,nil)
+		defaultHandler.HandleError(e,resp, xchgCtx,ctx,nil)
 	}
 }
 

@@ -31,7 +31,7 @@ func (t *Template) Matches(exchange RawExchange) bool {
 }
 
 type ErrorHandler interface {
-	HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHandler ErrorHandler)
+	HandleError(e error, response interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler ErrorHandler)
 }
 
 // ******** Template Builder *******

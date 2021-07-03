@@ -40,13 +40,13 @@ func Test_requestHandler(t *testing.T){
 // default error handler
 type defaultErrorHanlder struct {}
 
-func (d *defaultErrorHanlder) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+func (d *defaultErrorHanlder) HandleError(e error,response interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
 	panic(e)
 }
 
 type mock struct {}
 // request error handler
-func (m *mock) HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+func (m *mock) HandleError(e error, respnse interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
 	panic(fmt.Errorf("something went wrong: "+e.Error()))
 }
 

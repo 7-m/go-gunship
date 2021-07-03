@@ -4,7 +4,7 @@ type CompiledRequest interface {
 	RequestProcessors() []ExecutionRequestProcessor
 	ResponseProcessorProcessors() []ExecutionResponseProcessor
 	MakeCopy() CompiledRequest
-	HandleError(e error, xchgCtx, ctx map[string]interface{}, defaultErrorHanlder ErrorHandler)
+	HandleError(e error, resp interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHanlder ErrorHandler)
 	ProcessRequest(xchgCtx, ctx map[string]interface{})
 	ProcessResponse(response interface{}, xchgCtx , ctx map[string]interface{})
 }

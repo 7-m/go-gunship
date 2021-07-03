@@ -1,8 +1,8 @@
 package executor
 
 import (
-	"fmt"
 	"gunship"
+	"log"
 	"sync"
 )
 
@@ -31,7 +31,7 @@ func Execute(compiledRequests []gunship.CompiledRequest, exchanger Exchanger,
 		response, err := exchanger.Exchange(reqCpy)
 
 		if err != nil {
-			reqCpy.HandleError(err, xchng, sessionCtx, defaultHandler)
+			reqCpy.HandleError(err, response,xchng, sessionCtx, defaultHandler)
 		}
 
 		// perform post processing and postresponse actions
@@ -55,10 +55,15 @@ func ExecuteParallel(compiledRequests []gunship.CompiledRequest, getHttpExchange
 	for i := 0; i < parallelism; i++ {
 		group.Add(1)
 		go func() {
-			fmt.Printf("------------------------------------started-----------------------")
-
+			defer func() {
+				group.Done()
+				if err := recover(); err != nil {
+					log.Printf("user stopped after error %v", err)
+				}
+			}()
+			log.Printf("--started-----")
 			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns, defaultHandler)
-			group.Done()
+
 		}()
 
 	}
