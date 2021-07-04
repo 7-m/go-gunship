@@ -19,11 +19,7 @@ type RequestProcessor interface {
 }
 type ResponseProcessor interface {
 	ProcessResponse(resp RawResponse, ctx map[string]map[string]string)
-
 }
 type Matcher interface {
 	Match(exchange RawExchange) bool
 }
-
-
-

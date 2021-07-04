@@ -14,7 +14,6 @@ func NewAnyTemplater() *anyTemplater {
 	return &anyTemplater{}
 }
 
-
 func (this *anyTemplater) ProcessRequest(request gunship.RawRequest, ctx map[string]map[string]string) {
 	req := request.(*template2.HttpRawRequest)
 	for _, literalsMap := range ctx {
@@ -24,13 +23,13 @@ func (this *anyTemplater) ProcessRequest(request gunship.RawRequest, ctx map[str
 			req.Body = strings.ReplaceAll(req.Body, literal, tmplt)
 
 			for _, vals := range req.Query {
-				for i, _ := range vals{
+				for i, _ := range vals {
 					vals[i] = strings.ReplaceAll(vals[i], literal, tmplt)
 				}
 
 			}
 			for _, vals := range req.Headers {
-				for i, _ := range vals{
+				for i, _ := range vals {
 					vals[i] = strings.ReplaceAll(vals[i], literal, tmplt)
 				}
 

@@ -41,6 +41,3 @@ func (s *UrlTokenizer) PathAtoms() []string {
 func (s *UrlTokenizer) QueryAtoms() []string {
 	return s.queryAtoms
 }
-
-
-

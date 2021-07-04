@@ -12,7 +12,7 @@ func TestSplitMatcher_Matcher(t *testing.T) {
 	rawRequest := template2.RawRequestBuilder().
 		SetPath("/api/v1/123").
 		SetBaseUrl("https://www.some.com").
-		SetQuery(map[string][]string{"cat" :{"purr", "mew"}, "dog" :{"woof"}}).
+		SetQuery(map[string][]string{"cat": {"purr", "mew"}, "dog": {"woof"}}).
 		Build()
 	if !mathcer.Match(&template2.HttpRawExchange{
 		Request: rawRequest,

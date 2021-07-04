@@ -7,20 +7,20 @@ import (
 )
 
 func TestTemplate_Before(t1 *testing.T) {
-	ctx := map[string]string{ "id" : "123", "auth" : "eyblablabla"}
+	ctx := map[string]string{"id": "123", "auth": "eyblablabla"}
 	var compiler gunship.ExecutionRequestProcessor
 	compiler = NewTemplateCompiler()
 	compiledRquest := &execution.HttpCompiledRequest{
-		Method:              "GET",
-		BaseUrl:             "https://www.example.com",
-		Path:                "/api/{id}/profile",
-		Body:                "",
-		Headers: map[string][]string{"authorization" :{ "{auth}"}},
+		Method:  "GET",
+		BaseUrl: "https://www.example.com",
+		Path:    "/api/{id}/profile",
+		Body:    "",
+		Headers: map[string][]string{"authorization": {"{auth}"}},
 	}
 
-	compiler.ProcessRequest(compiledRquest,nil, map[string]interface{}{"template": ctx})
+	compiler.ProcessRequest(compiledRquest, nil, map[string]interface{}{"template": ctx})
 
-	if compiledRquest.Path != "/api/123/profile" || compiledRquest.Headers["authorization"][0] != "eyblablabla"{
+	if compiledRquest.Path != "/api/123/profile" || compiledRquest.Headers["authorization"][0] != "eyblablabla" {
 		t1.Fail()
 	}
 }
@@ -37,10 +37,10 @@ func Test_replace(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "success case",
-			args:    args{
+			name: "success case",
+			args: args{
 				s:    "/api/{userid}/profile/{a}",
-				vars: map[string]string{"userid":"100uid11", "a":"eyf315652t4v"},
+				vars: map[string]string{"userid": "100uid11", "a": "eyf315652t4v"},
 			},
 			want:    "/api/100uid11/profile/eyf315652t4v",
 			wantErr: false,

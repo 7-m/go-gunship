@@ -26,7 +26,7 @@ func (e extractor) ProcessResponse(r interface{}, xchngCtx map[string]interface{
 }
 
 func (e extractor) MarshalJSON() ([]byte, error) {
-	return json.Marshal( struct {
+	return json.Marshal(struct {
 		processName string
 	}{
 		processName: "custom-processor",

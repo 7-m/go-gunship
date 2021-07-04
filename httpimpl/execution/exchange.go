@@ -17,7 +17,3 @@ func (h *HttpRawExchange) RawRequest() gunship.RawRequest {
 func (h *HttpRawExchange) RawResponse() gunship.RawResponse {
 	return h.Response
 }
-
-
-
-

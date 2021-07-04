@@ -29,35 +29,35 @@ func GetExhchanges1() []*template2.HttpRawExchange {
 		SetMethod("POST").
 		SetPath("/api/v1/person").
 		SetBody(`{"name" : "elrich", "age":"34", "address" : "silicon valley"}`).
-		AddHeader("Authorization" , "ey123").
+		AddHeader("Authorization", "ey123").
 		Build()
 	createpersonResponse := template2.RawResponseBuilder().
 		SetBody(`{"personId" : "42"}`).
 		Build()
-	createxchng := &template2.HttpRawExchange{createperson,createpersonResponse}
+	createxchng := &template2.HttpRawExchange{createperson, createpersonResponse}
 	getperson := template2.RawRequestBuilder().
 		SetBaseUrl("http://example.com").
 		SetMethod("GET").
 		SetPath("/api/v1/person/42").
-		AddHeader("Authorization" , "ey123").
+		AddHeader("Authorization", "ey123").
 		Build()
 	getpersonResponse := template2.RawResponseBuilder().
 		SetBody(`{"name" : "elrich", "age":"34", "address" : "silicon valley"}`).
 		Build()
-	getpersonxchng := &template2.HttpRawExchange{getperson,getpersonResponse}
+	getpersonxchng := &template2.HttpRawExchange{getperson, getpersonResponse}
 
 	replaceperson := template2.RawRequestBuilder().
 		SetBaseUrl("http://example.com").
 		SetMethod("PUT").
 		SetPath("/api/v1/person/42").
-		AddHeader("Authorization" , "ey123").
+		AddHeader("Authorization", "ey123").
 		SetBody(`{"name" : "elrich", "age" : "34", "address" : "tibet"}`).
 		Build()
 	replacepersonResponse := template2.RawResponseBuilder().
 		SetBody(`{"name" : "elrich", "age" : "34", "address" : "tibet"}`).
 		Build()
 	replacexchng := &template2.HttpRawExchange{replaceperson, replacepersonResponse}
-	return []*template2.HttpRawExchange{lognxchg,createxchng,getpersonxchng,replacexchng}
+	return []*template2.HttpRawExchange{lognxchg, createxchng, getpersonxchng, replacexchng}
 }
 
 func CreateServer1() (*httptest.Server, *http.Client) {
@@ -76,13 +76,14 @@ func CreateServer1() (*httptest.Server, *http.Client) {
 }
 
 type person struct {
-	name string
-	age int
+	name    string
+	age     int
 	address string
 }
 
 // person_id -> person
 var personDb = map[string]*person{}
+
 func CreatePersonHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	all, err := ioutil.ReadAll(request.Body)
 	utils.Panic(err, "error while reading body")
@@ -99,11 +100,10 @@ func CreatePersonHandler(writer http.ResponseWriter, request *http.Request, para
 		personId string
 	}{
 		personId: personId,
-	},"", " ")
+	}, "", " ")
 	utils.Panic(err, "error while marshalling json")
 	_, err = writer.Write(response)
 	utils.Panic(err, "error while writing json response")
-
 
 }
 func UpdatePersonHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -124,8 +124,8 @@ func UpdatePersonHandler(writer http.ResponseWriter, request *http.Request, para
 
 }
 
-
 var auths = map[string]bool{}
+
 func LoginHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	itoa := strconv.Itoa(rand.Int())
 	auths[itoa] = true
@@ -143,7 +143,7 @@ func LoginHandler(writer http.ResponseWriter, request *http.Request, params http
 func GetPersonHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	if p, ok := personDb[params.ByName("id")]; !ok {
 		writer.WriteHeader(http.StatusNotFound)
-	}else{
+	} else {
 		_, err := writer.Write(utils.MustMarshal(p))
 		utils.Panic(err, "error writing person to response")
 	}
@@ -161,4 +161,3 @@ func AuthHandler(nextHandler httprouter.Handle) httprouter.Handle {
 	}
 
 }
-

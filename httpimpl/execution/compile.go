@@ -13,18 +13,18 @@ import (
 func init() {
 	gob.Register(&HttpCompiledRequest{})
 }
+
 // HttpCompiledRequest represents a templated HTTP request with its associated request and response processors.
 // The request and response processors, transform/edit the request to prepare it to be convereted
 // to a valid http.Request. Always MakeCopy() and then call its request processors so as to
 // not modify the original template
 
-
 type HttpCompiledRequest struct {
-	Method              string
-	BaseUrl             string
-	Path                string
-	Query               map[string][]string
-	Headers             map[string][]string
+	Method  string
+	BaseUrl string
+	Path    string
+	Query   map[string][]string
+	Headers map[string][]string
 	// perform template replacements and other actions here
 	RequestProcessors_ []gunship.ExecutionRequestProcessor
 	// perform data extractions actions here
@@ -38,10 +38,10 @@ type HttpCompiledRequest struct {
 }
 
 func (this *HttpCompiledRequest) HandleError(e error, resp interface{}, xchgCtx, ctx map[string]interface{}, defaultHandler gunship.ErrorHandler) {
-	if this.ErrorHandler != nil{
+	if this.ErrorHandler != nil {
 		this.ErrorHandler.HandleError(e, resp, xchgCtx, ctx, defaultHandler)
-	}else {
-		defaultHandler.HandleError(e,resp, xchgCtx,ctx,nil)
+	} else {
+		defaultHandler.HandleError(e, resp, xchgCtx, ctx, nil)
 	}
 }
 
@@ -49,7 +49,7 @@ func (this HttpCompiledRequest) RequestProcessors() []gunship.ExecutionRequestPr
 	return this.RequestProcessors_
 }
 
-func (this HttpCompiledRequest) ResponseProcessorProcessors() []gunship.ExecutionResponseProcessor {
+func (this HttpCompiledRequest) ResponseProcessor() []gunship.ExecutionResponseProcessor {
 	return this.ResponseProcessors_
 }
 
@@ -67,7 +67,7 @@ func FromExchange(e gunship.RawExchange, template *gunship.Template) gunship.Com
 		Body:                req.Body,
 		RequestProcessors_:  req.RequestProcessors_,
 		ResponseProcessors_: resp.After,
-		ErrorHandler: template.ErrorCallback(),
+		ErrorHandler:        template.ErrorHandler(),
 	}
 
 }
@@ -109,7 +109,7 @@ func (this HttpCompiledRequest) MakeCopy() gunship.CompiledRequest {
 		Headers:             nil,
 		RequestProcessors_:  this.RequestProcessors_,
 		ResponseProcessors_: this.ResponseProcessors_,
-		ErrorHandler  : this.ErrorHandler,
+		ErrorHandler:        this.ErrorHandler,
 	}
 
 	query := map[string][]string{}

@@ -2,11 +2,11 @@ package gunship
 
 type CompiledRequest interface {
 	RequestProcessors() []ExecutionRequestProcessor
-	ResponseProcessorProcessors() []ExecutionResponseProcessor
+	ResponseProcessor() []ExecutionResponseProcessor
 	MakeCopy() CompiledRequest
-	HandleError(e error, resp interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHanlder ErrorHandler)
+	HandleError(e error, resp interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler ErrorHandler)
 	ProcessRequest(xchgCtx, ctx map[string]interface{})
-	ProcessResponse(response interface{}, xchgCtx , ctx map[string]interface{})
+	ProcessResponse(response interface{}, xchgCtx, ctx map[string]interface{})
 }
 
 // ExecutionRequestProcessor performs any tranformations/logging etc before a request is sent.

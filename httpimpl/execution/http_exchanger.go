@@ -13,10 +13,7 @@ func NewHttpExchanger(client *http.Client) *httpExchanger {
 	return &httpExchanger{client: client}
 }
 
-
 func (h *httpExchanger) Exchange(request gunship.CompiledRequest) (interface{}, error) {
 	r := request.(*HttpCompiledRequest)
 	return h.client.Do(r.ToHttpRequest())
 }
-
-

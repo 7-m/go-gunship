@@ -10,7 +10,6 @@ import (
 // Extrract and store the literal at the position specified by a literal
 type urlExtractor struct {
 	tokenziner *utils.UrlTokenizer
-
 }
 
 func NewUrlExtractor(tokeizer string) *urlExtractor {
@@ -35,9 +34,8 @@ func (u urlExtractor) ProcessRequest(r gunship.RawRequest, ctx map[string]map[st
 			token = token[1 : len(token)-1] // remove braces
 			utils.EnsureValue(ctx, token, map[string]string{})
 			literalMap := ctx[token]
-			literalMap[reqtokenizer.PathAtoms()[i]] = token +  strconv.Itoa(len(literalMap))
+			literalMap[reqtokenizer.PathAtoms()[i]] = token + strconv.Itoa(len(literalMap))
 		}
 	}
 
 }
-

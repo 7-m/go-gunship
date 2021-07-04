@@ -10,7 +10,7 @@ import (
 func Test_defaultHanlder(t *testing.T) {
 
 	defer func() {
-		r :=  recover().(error)
+		r := recover().(error)
 		if r.Error() != "NotFound" {
 			t.Fail()
 		}
@@ -22,9 +22,9 @@ func Test_defaultHanlder(t *testing.T) {
 
 }
 
-func Test_requestHandler(t *testing.T){
+func Test_requestHandler(t *testing.T) {
 	defer func() {
-		r :=  recover().(error)
+		r := recover().(error)
 		if r.Error() != "something went wrong: NotFound" {
 			t.Fail()
 		}
@@ -38,19 +38,19 @@ func Test_requestHandler(t *testing.T){
 }
 
 // default error handler
-type defaultErrorHanlder struct {}
+type defaultErrorHanlder struct{}
 
-func (d *defaultErrorHanlder) HandleError(e error,response interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+func (d *defaultErrorHanlder) HandleError(e error, response interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
 	panic(e)
 }
 
-type mock struct {}
+type mock struct{}
+
 // request error handler
 func (m *mock) HandleError(e error, respnse interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
-	panic(fmt.Errorf("something went wrong: "+e.Error()))
+	panic(fmt.Errorf("something went wrong: " + e.Error()))
 }
 
 func (m *mock) Exchange(request gunship.CompiledRequest) (interface{}, error) {
 	return nil, fmt.Errorf("NotFound")
 }
-

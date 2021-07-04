@@ -9,8 +9,9 @@ import (
 )
 
 func init() {
-gob.Register(&jsonExtractor{})
+	gob.Register(&jsonExtractor{})
 }
+
 type jsonExtractor struct {
 	Extractors map[string]string // paths -> variables
 }
@@ -26,10 +27,9 @@ func (j *jsonExtractor) ProcessResponse(r interface{}, xchngCtx map[string]inter
 	if err != nil {
 		panic("failed to read json from response body")
 	}
-	json := string(jsonBlob)
 
 	for path, variable := range j.Extractors {
-		match := gjson.Get(json, path)
+		match := gjson.Get(string(jsonBlob), path)
 		if match.Exists() {
 			ctx[variable] = match.String()
 		}

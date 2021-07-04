@@ -11,7 +11,7 @@ import (
 
 type jsonCorrelator struct {
 	extractors map[string]string // paths -> variables
-	count int
+	count      int
 }
 
 func NewJsonCorrelator(extractors map[string]string) *jsonCorrelator {

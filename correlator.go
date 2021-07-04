@@ -5,15 +5,15 @@ type Template struct {
 	matcher            Matcher // checks if this should be applied ornot
 	requestProcessors  []RequestProcessor
 	responseProcessors []ResponseProcessor
-	errorCallback      ErrorHandler
+	errorHandler       ErrorHandler
 }
 
 func NewTemplate(matcher Matcher, before []RequestProcessor, after []ResponseProcessor) *Template {
 	return &Template{matcher: matcher, requestProcessors: before, responseProcessors: after}
 }
 
-func (t *Template) ErrorCallback() ErrorHandler {
-	return t.errorCallback
+func (t *Template) ErrorHandler() ErrorHandler {
+	return t.errorHandler
 }
 
 func (t *Template) RequestProcessors() []RequestProcessor {
@@ -61,7 +61,7 @@ func (this *templateBuilder) SetErrorHandler(handler ErrorHandler) *templateBuil
 	return this
 }
 func (this *templateBuilder) AddResponseProcessor(responseProcessor ResponseProcessor) *templateBuilder {
-	this.responseProcessors = append(this.responseProcessors, responseProcessor )
+	this.responseProcessors = append(this.responseProcessors, responseProcessor)
 	return this
 }
 func (this *templateBuilder) Build() *Template {
@@ -75,4 +75,3 @@ func (this *templateBuilder) Build() *Template {
 	return &Template{matcher: this.matcher, requestProcessors: this.requestProcessors,
 		responseProcessors: this.responseProcessors}
 }
-

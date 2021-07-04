@@ -9,10 +9,10 @@ import (
 	"os"
 )
 
-func ReadHarFromFile(path string ) []*template2.HttpRawExchange {
+func ReadHarFromFile(path string) []*template2.HttpRawExchange {
 	root := Root{}
 	data, err := ioutil.ReadFile(path)
-	utils.Panic(err,"error reading file")
+	utils.Panic(err, "error reading file")
 	err = json.Unmarshal(data, &root)
 	utils.Panic(err, "error un marshalling")
 	//fmt.Println(root)
@@ -24,15 +24,15 @@ func ReadHarFromFile(path string ) []*template2.HttpRawExchange {
 func MakeExchangeFromHar(entries []Entries) []*template2.HttpRawExchange {
 	exchanges := []*template2.HttpRawExchange{}
 
-	for _,ele := range entries{
+	for _, ele := range entries {
 
 		// parse request
-		reqUrl, err :=url.Parse(ele.Request.URL)
-		utils.Panic(err,"error parsing url")
+		reqUrl, err := url.Parse(ele.Request.URL)
+		utils.Panic(err, "error parsing url")
 
 		reqHeaders := map[string][]string{}
 		for _, header := range ele.Request.Headers {
-			if header.Name == "Cookie" || header.Name == "Accept-Encoding"{
+			if header.Name == "Cookie" || header.Name == "Accept-Encoding" {
 				continue
 			}
 			if _, ok := reqHeaders[header.Name]; !ok {
@@ -41,7 +41,6 @@ func MakeExchangeFromHar(entries []Entries) []*template2.HttpRawExchange {
 			reqHeaders[header.Name] = append(reqHeaders[header.Name], header.Value)
 		}
 
-
 		//request := template.RawReqUrlHeaders(ele.Request.Method, reqUrl, reqHeaders)
 		request := template2.RawRequestBuilder().
 			SetMethod(ele.Request.Method).
@@ -49,7 +48,6 @@ func MakeExchangeFromHar(entries []Entries) []*template2.HttpRawExchange {
 			SetHeaders(reqHeaders).
 			SetBody(ele.Request.Postdata.Text).
 			Build()
-
 
 		// parse response
 		respHeaders := map[string][]string{}
@@ -60,7 +58,6 @@ func MakeExchangeFromHar(entries []Entries) []*template2.HttpRawExchange {
 			}
 			respHeaders[header.Name] = append(respHeaders[header.Name], header.Value)
 		}
-
 
 		response := template2.NewRawResponse(respHeaders, ele.Response.Content.Text)
 		exchanges = append(exchanges, &template2.HttpRawExchange{
@@ -73,19 +70,20 @@ func MakeExchangeFromHar(entries []Entries) []*template2.HttpRawExchange {
 }
 
 type RequestFilerFunc func(exchange *Entries) bool
+
 // HarFilter Reads and filters out useless fields and entries and rewrites file
-func HarFilter(path string, filter RequestFilerFunc){
+func HarFilter(path string, filter RequestFilerFunc) {
 	root := Root{}
 	data, err := ioutil.ReadFile(path)
-	utils.Panic(err,"error reading file")
+	utils.Panic(err, "error reading file")
 	err = json.Unmarshal(data, &root)
 	utils.Panic(err, "error un marshalling")
 	oldEntries := root.Log.Entries
 	newEntries := []Entries{}
 
-	for _, e:= range oldEntries{
+	for _, e := range oldEntries {
 		if filter(&e) {
-			newEntries = append(newEntries, e )
+			newEntries = append(newEntries, e)
 		}
 	}
 	root.Log.Entries = newEntries
@@ -94,9 +92,8 @@ func HarFilter(path string, filter RequestFilerFunc){
 
 	encoder := json.NewEncoder(file)
 	encoder.SetEscapeHTML(false)
-	encoder.SetIndent(""," ")
+	encoder.SetIndent("", " ")
 	err = encoder.Encode(root)
 	utils.Panic(err, "error encoding json to file")
 
 }
-

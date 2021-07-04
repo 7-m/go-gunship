@@ -19,7 +19,7 @@ func Test_correlate(t *testing.T) {
 	mockerServer, _ := testutils2.CreateServer1()
 	defer mockerServer.Close()
 
-	var exchanges  = []gunship.RawExchange{}
+	var exchanges = []gunship.RawExchange{}
 	for _, e := range testutils2.GetExhchanges1() {
 		exchanges = append(exchanges, e)
 	}
@@ -35,13 +35,13 @@ func Test_correlate(t *testing.T) {
 	// create person and extract its id
 	createPersonMatcher := matchers2.NewWildcardMatcher("/api/v1/person")
 	personIdXtrct := post_actions2.NewJsonCorrelator(map[string]string{"personId": "PERSON"})
-	createPersonTemplate :=  gunship.NewBuilder().
+	createPersonTemplate := gunship.NewBuilder().
 		SetMatcher(createPersonMatcher).
 		AddResponseProcessor(personIdXtrct).
 		Build()
 
 	// any matcher template to replace all person-id and auth occurences
-	anymatcherTemplate :=  gunship.NewBuilder().
+	anymatcherTemplate := gunship.NewBuilder().
 		SetMatcher(matchers2.AnyMatcher{}).
 		AddRequestProcessor(pre_actions2.NewAnyTemplater()).
 		Build()
@@ -54,16 +54,13 @@ func Test_correlate(t *testing.T) {
 	json := template2.CompiledRequestsToJson(compiledReqs)
 	fmt.Println(string(json))
 
-
 	var bug bytes.Buffer
 	encoder := gob.NewEncoder(&bug)
 	err := encoder.Encode(compiledReqs)
-	utils.Panic(err, "error writing file" )
+	utils.Panic(err, "error writing file")
 	var cr []gunship.CompiledRequest
 	decoder := gob.NewDecoder(&bug)
 	err = decoder.Decode(&cr)
 	utils.Panic(err, "couldnt decode")
 
-
 }
-

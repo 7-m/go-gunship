@@ -18,9 +18,9 @@ type Pagetimings struct {
 	Onload        int `json:"onLoad"`
 }
 type Pages struct {
-	Starteddatetime time.Time   `json:"startedDateTime"`
-	ID              string      `json:"id"`
-	Title           string      `json:"title"`
+	Starteddatetime time.Time `json:"startedDateTime"`
+	ID              string    `json:"id"`
+	Title           string    `json:"title"`
 	//Pagetimings     Pagetimings `json:"pageTimings"`
 }
 type Headers struct {
@@ -85,11 +85,11 @@ type Entries struct {
 	Request         Request   `json:"request,omitempty"`
 	Response        Response  `json:"response"`
 	//Cache           Cache     `json:"cache"`
-	Timings         Timings   `json:"timings"`
-	Time            float32       `json:"time"`
+	Timings Timings `json:"timings"`
+	Time    float32 `json:"time"`
 	//Securitystate   string    `json:"_securityState"`
-	Serveripaddress string    `json:"serverIPAddress"`
-	Connection      string    `json:"connection"`
+	Serveripaddress string `json:"serverIPAddress"`
+	Connection      string `json:"connection"`
 }
 type Log struct {
 	//Version string    `json:"version"`

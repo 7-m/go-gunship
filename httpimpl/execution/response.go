@@ -32,7 +32,6 @@ func NewRawResponse(headers map[string][]string, body string) *HttpRawResponse {
 
 }
 
-
 func RawResponseFromHttp(response *http.Response) *HttpRawResponse {
 	all, err := ioutil.ReadAll(response.Body)
 	utils.Panic(err, "error reading response body")

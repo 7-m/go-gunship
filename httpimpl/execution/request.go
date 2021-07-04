@@ -32,7 +32,6 @@ func (h HttpRawRequest) RequestProcessors() []gunship.ExecutionRequestProcessor 
 	return h.RequestProcessors_
 }
 
-
 func (h HttpRawRequest) RawRequest() {
 	panic("marker method do not use")
 }
@@ -63,7 +62,6 @@ type rawRequestBuilder struct {
 	// and responseProcessors execution of the actual http request
 	RequestProcessors []gunship.ExecutionRequestProcessor
 }
-
 
 func RawRequestBuilder() *rawRequestBuilder {
 	return &rawRequestBuilder{
@@ -98,6 +96,7 @@ func (r *rawRequestBuilder) SetQuery(query map[string][]string) *rawRequestBuild
 	r.Query = query
 	return r
 }
+
 // Deprecated use AddHeader()
 func (r *rawRequestBuilder) SetHeaders(headers map[string][]string) *rawRequestBuilder {
 	r.Headers = headers
@@ -121,7 +120,7 @@ func (r *rawRequestBuilder) Build() *HttpRawRequest {
 	}
 
 	return &HttpRawRequest{
-		Method:             r.Method ,
+		Method:             r.Method,
 		BaseUrl:            r.BaseUrl,
 		Path:               r.Path,
 		Query:              r.Query,

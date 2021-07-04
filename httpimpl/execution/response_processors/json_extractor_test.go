@@ -21,7 +21,7 @@ func TestJsonExtractor_after(t *testing.T) {
 	response := &http.Response{Body: ioutil.NopCloser(strings.NewReader(json))}
 	jsonextractor := getTestCase(ctx)
 
-	jsonextractor.ProcessResponse(response,nil, map[string]interface{}{"template": ctx})
+	jsonextractor.ProcessResponse(response, nil, map[string]interface{}{"template": ctx})
 
 	if _, ok := ctx["id"]; !ok {
 		t.Fail()
@@ -31,5 +31,5 @@ func TestJsonExtractor_after(t *testing.T) {
 func getTestCase(ctx map[string]string) *jsonExtractor {
 
 	extractor := map[string]string{"user.profile.id": "id"}
-	return NewJsonBodyExtractor( extractor)
+	return NewJsonBodyExtractor(extractor)
 }

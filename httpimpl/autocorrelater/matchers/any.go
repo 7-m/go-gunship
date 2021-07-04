@@ -5,7 +5,6 @@ import (
 )
 
 type AnyMatcher struct {
-
 }
 
 func (this AnyMatcher) Match(exchange gunship.RawExchange) bool {

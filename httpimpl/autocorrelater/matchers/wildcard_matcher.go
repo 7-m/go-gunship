@@ -16,29 +16,27 @@ type wildcardMatcher struct {
 	urlTokenizer *utils.UrlTokenizer
 }
 
-
 func NewWildcardMatcher(pattern string) *wildcardMatcher {
 	return &wildcardMatcher{utils.NewUrlTokenzier(pattern)}
 }
 
 func (this *wildcardMatcher) Match(exchange gunship.RawExchange) bool {
-	req:= exchange.(*template2.HttpRawExchange).Request
+	req := exchange.(*template2.HttpRawExchange).Request
 	// match with just url
 	reqAtoms := strings.Split(req.Path[1:], "/")
-	if len(reqAtoms) != len(this.urlTokenizer.PathAtoms()){
+	if len(reqAtoms) != len(this.urlTokenizer.PathAtoms()) {
 		return false
 	}
 	for i, atom := range this.urlTokenizer.PathAtoms() {
-			if utils.IsTemplate(atom) {
-				continue
-			}
-			if atom == reqAtoms[i] {
-				continue
-			}else {
-				return false
-			}
+		if utils.IsTemplate(atom) {
+			continue
 		}
-
+		if atom == reqAtoms[i] {
+			continue
+		} else {
+			return false
+		}
+	}
 
 	return true
 }
@@ -52,7 +50,7 @@ func (this *wildcardMatcher) ProcessRequest(req *template2.HttpRawRequest, ctx m
 	for i, atom := range this.urlTokenizer.PathAtoms() {
 		if utils.IsTemplate(atom) {
 			templateName := reqAtoms[i]
-			result += "/" + "{" + ctx[atom[1: len(atom)-1]][templateName] + "}"
+			result += "/" + "{" + ctx[atom[1:len(atom)-1]][templateName] + "}"
 		} else {
 			result += "/" + atom
 		}
