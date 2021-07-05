@@ -28,7 +28,7 @@ func TestJsonExtractor_after(t *testing.T) {
 	}
 }
 
-func getTestCase(ctx map[string]string) *jsonExtractor {
+func getTestCase(ctx map[string]string) *JsonExtractor {
 
 	extractor := map[string]string{"user.profile.id": "id"}
 	return NewJsonBodyExtractor(extractor)

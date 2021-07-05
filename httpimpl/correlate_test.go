@@ -9,6 +9,8 @@ import (
 	post_actions2 "gunship/httpimpl/autocorrelater/post_actions"
 	pre_actions2 "gunship/httpimpl/autocorrelater/pre_actions"
 	template2 "gunship/httpimpl/execution"
+	"gunship/httpimpl/execution/request_processors"
+	"gunship/httpimpl/execution/response_processors"
 	testutils2 "gunship/httpimpl/testutils"
 	"gunship/utils"
 	"testing"
@@ -46,20 +48,38 @@ func Test_correlate(t *testing.T) {
 		AddRequestProcessor(pre_actions2.NewAnyTemplater()).
 		Build()
 
+	// we manually add the base urls variable to be BASE0
+	correlatorCtx := map[string]map[string]string{"BASE": {"http://example.com": "BASE0"}}
 	compiledReqs := gunship.Correlate(exchanges,
 		[]*gunship.Template{authTemplate, createPersonTemplate, anymatcherTemplate},
-		map[string]map[string]string{},
+		correlatorCtx,
 		template2.FromExchange)
+
+	// assert that the write execution processors were created
+	login := compiledReqs[0]
+	_ = login.RequestProcessors()[0].(*request_processors.TemplateCompiler)
+	_ = login.ResponseProcessor()[0].(*response_processors.JsonExtractor)
+
+	createPerson := compiledReqs[1]
+	_ = createPerson.RequestProcessors()[0].(*request_processors.TemplateCompiler)
+	_ = createPerson.ResponseProcessor()[0].(*response_processors.JsonExtractor)
+
+	getPerson := compiledReqs[2]
+	_ = getPerson.RequestProcessors()[0].(*request_processors.TemplateCompiler)
+
+	updatePerson := compiledReqs[3]
+	_ = updatePerson.RequestProcessors()[0].(*request_processors.TemplateCompiler)
 
 	json := template2.CompiledRequestsToJson(compiledReqs)
 	fmt.Println(string(json))
 
-	var bug bytes.Buffer
-	encoder := gob.NewEncoder(&bug)
+	// assert that the requests can be serialized
+	var buf bytes.Buffer
+	encoder := gob.NewEncoder(&buf)
 	err := encoder.Encode(compiledReqs)
 	utils.Panic(err, "error writing file")
 	var cr []gunship.CompiledRequest
-	decoder := gob.NewDecoder(&bug)
+	decoder := gob.NewDecoder(&buf)
 	err = decoder.Decode(&cr)
 	utils.Panic(err, "couldnt decode")
 

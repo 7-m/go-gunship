@@ -19,17 +19,18 @@ func (this *anyTemplater) ProcessRequest(request gunship.RawRequest, ctx map[str
 	for _, literalsMap := range ctx {
 		for literal, tmpltName := range literalsMap {
 			tmplt := "{" + tmpltName + "}"
+			req.BaseUrl = strings.ReplaceAll(req.BaseUrl, literal, tmplt)
 			req.Path = strings.ReplaceAll(req.Path, literal, tmplt)
 			req.Body = strings.ReplaceAll(req.Body, literal, tmplt)
 
 			for _, vals := range req.Query {
-				for i, _ := range vals {
+				for i := range vals {
 					vals[i] = strings.ReplaceAll(vals[i], literal, tmplt)
 				}
 
 			}
 			for _, vals := range req.Headers {
-				for i, _ := range vals {
+				for i := range vals {
 					vals[i] = strings.ReplaceAll(vals[i], literal, tmplt)
 				}
 

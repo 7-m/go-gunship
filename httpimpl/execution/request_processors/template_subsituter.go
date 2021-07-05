@@ -3,61 +3,62 @@ package request_processors
 import (
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
 	"gunship"
 	template2 "gunship/httpimpl/execution"
 	"strings"
+	"unicode"
 )
 
 func init() {
-	gob.Register(&templateCompiler{})
+	gob.Register(&TemplateCompiler{})
 }
 
-type templateCompiler struct {
+type TemplateCompiler struct {
 }
 
-func (this *templateCompiler) MarshalJSON() ([]byte, error) {
+func (this *TemplateCompiler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Type string
 	}{
-		Type: "templateCompiler",
+		Type: "TemplateCompiler",
 	},
 	)
 }
 
-func NewTemplateCompiler() *templateCompiler {
-	return &templateCompiler{}
+func NewTemplateCompiler() *TemplateCompiler {
+	return &TemplateCompiler{}
 }
 
-func (t *templateCompiler) ProcessRequest(request gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
+func (t *TemplateCompiler) ProcessRequest(request gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
 	r := request.(*template2.HttpCompiledRequest)
 	Ctx := sessionCtx["template"].(map[string]string)
 	// replace in path, header and body
-	var err error
-	r.Path, err = replace(r.Path, Ctx)
-	if err != nil {
-		panic("error replacing templates")
-	}
+	r.BaseUrl = replace(r.BaseUrl, Ctx)
+	r.Path = replace(r.Path, Ctx)
 	// Todo handle multiple headers, Note :-
 	// this wont be appicable as multiple values
 	// will already be combined into a single csv
 	// string, verify it
 	for _, vals := range r.Headers {
 
-		for i, _ := range vals {
-			vals[i], err = replace(vals[i], Ctx)
-		}
-		if err != nil {
-			panic("error replacing templates")
+		for i := range vals {
+			vals[i] = replace(vals[i], Ctx)
 		}
 
 	}
-	// Todo replace template in body
+	for _, vals := range r.Query {
+
+		for i := range vals {
+			vals[i] = replace(vals[i], Ctx)
+		}
+
+	}
+	r.Body = replace(r.Body, Ctx)
 
 }
 
 // replaces '{xyz}' with Ctx['xyz']
-func replace(s string, vars map[string]string) (string, error) {
+func replace(s string, vars map[string]string) string {
 	sb := strings.Builder{}
 	lim := len(s)
 	i := 0
@@ -70,12 +71,18 @@ NextChar:
 			i++
 			start := i
 			for ; i < lim; i++ {
+				// if the char is not a }, letter or number, then re read char
+				if !(s[i] == '}' || unicode.IsLetter(rune(s[i])) || unicode.IsNumber(rune(s[i]))) {
+					sb.WriteString(s[start-1 : i])
+					i--
+					continue NextChar
+				}
 				if s[i] == '}' {
 					// replace everything in between
 					variable := s[start:i]
 					replacement, ok := vars[variable]
 					if !ok {
-						panic("no variable found for replacement : " + variable)
+						panic("no literal found for template {" + variable + "}")
 					}
 					sb.WriteString(replacement)
 					continue NextChar
@@ -83,12 +90,14 @@ NextChar:
 			}
 			// we come here if we run of characters
 			// while looking for }
-			return "", fmt.Errorf("Couldn't find closing '}'")
+			sb.WriteString(s[start-1 : lim])
 		} else {
 			sb.WriteByte(s[i])
 		}
 
 	}
-	sb.WriteString(s[i:])
-	return sb.String(), nil
+	if i < lim {
+		sb.WriteString(s[i:])
+	}
+	return sb.String()
 }

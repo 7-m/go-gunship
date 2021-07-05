@@ -3,14 +3,16 @@ package gunship
 type ExchangeCompilerFunc func(exchange RawExchange, template *Template) CompiledRequest
 
 // Correlate accepts set of exchanges and correlator.Templates and applies the templates to the
-// exchanges. It then tranforms the exchanges to compiled requests
+// exchanges. It then compiles the exchange to a compiled request. If the exchange matches multiple
+// templates then, the processors of all the matching templates are applied but the last exchange
+// compiled using exchangeCompiler is considered
 func Correlate(exchanges []RawExchange,
 	templates []*Template, ctx map[string]map[string]string,
 	exchangeCompiler ExchangeCompilerFunc) []CompiledRequest {
 	compiledRequests := []CompiledRequest{}
 
-NextExchange:
 	for _, exchange := range exchanges {
+		var compiledRequest CompiledRequest
 		for _, tmplt := range templates {
 			if tmplt.Matches(exchange) {
 				for _, pre := range tmplt.RequestProcessors() {
@@ -19,10 +21,10 @@ NextExchange:
 				for _, post := range tmplt.ResponseProcessors() {
 					post.ProcessResponse(exchange.RawResponse(), ctx)
 				}
-				compiledRequests = append(compiledRequests, exchangeCompiler(exchange, tmplt))
-				continue NextExchange
+				compiledRequest = exchangeCompiler(exchange, tmplt)
 			}
 		}
+		compiledRequests = append(compiledRequests, compiledRequest)
 
 	}
 	return compiledRequests

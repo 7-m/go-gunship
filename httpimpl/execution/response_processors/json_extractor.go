@@ -9,18 +9,18 @@ import (
 )
 
 func init() {
-	gob.Register(&jsonExtractor{})
+	gob.Register(&JsonExtractor{})
 }
 
-type jsonExtractor struct {
+type JsonExtractor struct {
 	Extractors map[string]string // paths -> variables
 }
 
-func NewJsonBodyExtractor(extractors map[string]string) *jsonExtractor {
-	return &jsonExtractor{Extractors: extractors}
+func NewJsonBodyExtractor(extractors map[string]string) *JsonExtractor {
+	return &JsonExtractor{Extractors: extractors}
 }
 
-func (j *jsonExtractor) ProcessResponse(r interface{}, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
+func (j *JsonExtractor) ProcessResponse(r interface{}, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
 	response := r.(*http.Response)
 	ctx := sessionCtx["template"].(map[string]string)
 	jsonBlob, err := ioutil.ReadAll(response.Body)
@@ -36,12 +36,12 @@ func (j *jsonExtractor) ProcessResponse(r interface{}, xchngCtx map[string]inter
 	}
 }
 
-func (j *jsonExtractor) MarshalJSON() ([]byte, error) {
+func (j *JsonExtractor) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Type       string
 		Extractors map[string]string
 	}{
-		Type:       "jsonExtractor",
+		Type:       "JsonExtractor",
 		Extractors: j.Extractors,
 	})
 }
