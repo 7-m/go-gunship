@@ -21,7 +21,7 @@ func (e extractor) ProcessResponse(r interface{}, xchngCtx map[string]interface{
 	}
 	url := gjson.Get(string(json), "0.url").String()
 	tokens := strings.Split(url, "/")
-	template["AUTH0"] = tokens[len(tokens)-1]
+	template["ALLOW_DESIGNER_AUTH0"] = tokens[len(tokens)-1]
 	template["PROJECTID0"] = tokens[len(tokens)-2]
 }
 

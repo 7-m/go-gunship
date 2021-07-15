@@ -72,7 +72,7 @@ NextChar:
 			start := i
 			for ; i < lim; i++ {
 				// if the char is not a }, letter or number, then re read char
-				if !(s[i] == '}' || unicode.IsLetter(rune(s[i])) || unicode.IsNumber(rune(s[i]))) {
+				if !(s[i] == '}' || s[i] == '_' || unicode.IsLetter(rune(s[i])) || unicode.IsNumber(rune(s[i]))) {
 					sb.WriteString(s[start-1 : i])
 					i--
 					continue NextChar

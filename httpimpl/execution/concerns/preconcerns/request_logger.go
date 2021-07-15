@@ -14,7 +14,8 @@ func NewHttpRequestLogger() *requestLogger {
 }
 
 func (r *requestLogger) ProcessRequest(req gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) {
-	fmt.Println(req.(*execution2.HttpCompiledRequest).Path)
+	request := req.(*execution2.HttpCompiledRequest)
+	fmt.Println(request.Path)
 }
 
 func (r *requestLogger) MarshalJSON() ([]byte, error) {

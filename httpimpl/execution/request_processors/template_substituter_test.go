@@ -33,7 +33,7 @@ func TestTemplate_Before(t1 *testing.T) {
 		t1.Fatalf("expected %v, got %v", expected, compiledRquest.Body)
 	}
 }
-
+// /login/designer/9003069e-fc61-4143-a4b8-d75a940648b9/{ALLOW_DESIGNER_AUTH0}
 func Test_replace(t *testing.T) {
 	type args struct {
 		s    string
@@ -47,10 +47,18 @@ func Test_replace(t *testing.T) {
 		{
 			name: "success case",
 			args: args{
-				s:    "/api/{userid}/profile/{a}",
-				vars: map[string]string{"userid": "100uid11", "a": "eyf315652t4v"},
+				s:    "/api/{user_id}/profile/{a}",
+				vars: map[string]string{"user_id": "100uid11", "a": "eyf315652t4v"},
 			},
 			want: "/api/100uid11/profile/eyf315652t4v",
+		},
+		{
+			name: "success case",
+			args: args{
+				s:    "/api/{user_id}/{a}",
+				vars: map[string]string{"user_id": "100uid11", "a": "eyf315652t4v"},
+			},
+			want: "/api/100uid11/eyf315652t4v",
 		},
 		{
 			name: "pass case",

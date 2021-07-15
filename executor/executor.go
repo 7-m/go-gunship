@@ -30,9 +30,7 @@ func Execute(compiledRequests []gunship.CompiledRequest, exchanger Exchanger,
 
 		response, err := exchanger.Exchange(reqCpy)
 
-		if err != nil {
-			reqCpy.HandleError(err, response, xchng, sessionCtx, defaultHandler)
-		}
+		reqCpy.HandleError(err, response, reqCpy, xchng, sessionCtx, defaultHandler)
 
 		// perform post processing and postresponse actions
 		for _, a := range postConcerns {
