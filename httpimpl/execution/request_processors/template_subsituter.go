@@ -66,14 +66,14 @@ func replace(s string, vars map[string]string) string {
 NextChar:
 	for ; i < lim-2; i++ {
 
-		if s[i] == '{' {
+		if s[i] == '$'  && s[i+1] == '{'{
 			// search for the ending }
-			i++
+			i+=2
 			start := i
 			for ; i < lim; i++ {
 				// if the char is not a }, letter or number, then re read char
 				if !(s[i] == '}' || s[i] == '_' || unicode.IsLetter(rune(s[i])) || unicode.IsNumber(rune(s[i]))) {
-					sb.WriteString(s[start-1 : i])
+					sb.WriteString(s[start-2 : i])
 					i--
 					continue NextChar
 				}
@@ -90,7 +90,7 @@ NextChar:
 			}
 			// we come here if we run of characters
 			// while looking for }
-			sb.WriteString(s[start-1 : lim])
+			sb.WriteString(s[start-2 : lim])
 		} else {
 			sb.WriteByte(s[i])
 		}

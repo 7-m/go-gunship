@@ -18,7 +18,7 @@ func (this *anyTemplater) ProcessRequest(request gunship.RawRequest, ctx map[str
 	req := request.(*template2.HttpRawRequest)
 	for _, literalsMap := range ctx {
 		for literal, tmpltName := range literalsMap {
-			tmplt := "{" + tmpltName + "}"
+			tmplt := "${" + tmpltName + "}"
 			req.BaseUrl = strings.ReplaceAll(req.BaseUrl, literal, tmplt)
 			req.Path = strings.ReplaceAll(req.Path, literal, tmplt)
 			req.Body = strings.ReplaceAll(req.Body, literal, tmplt)

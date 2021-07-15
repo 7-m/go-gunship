@@ -13,9 +13,9 @@ func TestTemplate_Before(t1 *testing.T) {
 	compiledRquest := &execution.HttpCompiledRequest{
 		Method:  "GET",
 		BaseUrl: "https://www.example.com",
-		Path:    "/api/{id}/profile",
-		Body:    `{"empId" : "{EMPID0}"}`,
-		Headers: map[string][]string{"authorization": {"{auth}"}},
+		Path:    "/api/${id}/profile",
+		Body:    `{"empId" : "${EMPID0}"}`,
+		Headers: map[string][]string{"authorization": {"${auth}"}},
 	}
 
 	compiler.ProcessRequest(compiledRquest, nil, map[string]interface{}{"template": ctx})
@@ -47,7 +47,7 @@ func Test_replace(t *testing.T) {
 		{
 			name: "success case",
 			args: args{
-				s:    "/api/{user_id}/profile/{a}",
+				s:    "/api/${user_id}/profile/${a}",
 				vars: map[string]string{"user_id": "100uid11", "a": "eyf315652t4v"},
 			},
 			want: "/api/100uid11/profile/eyf315652t4v",
@@ -55,7 +55,7 @@ func Test_replace(t *testing.T) {
 		{
 			name: "success case",
 			args: args{
-				s:    "/api/{user_id}/{a}",
+				s:    "/api/${user_id}/${a}",
 				vars: map[string]string{"user_id": "100uid11", "a": "eyf315652t4v"},
 			},
 			want: "/api/100uid11/eyf315652t4v",
@@ -87,10 +87,10 @@ func Test_replace(t *testing.T) {
 		{
 			name: "pass case",
 			args: args{
-				s:    "{abcd{var}",
+				s:    "${abcd${var}",
 				vars: map[string]string{"var": "123"},
 			},
-			want: "{abcd123",
+			want: "${abcd123",
 		},
 	}
 	for _, tt := range tests {
