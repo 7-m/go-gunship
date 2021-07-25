@@ -7,6 +7,7 @@ type CompiledRequest interface {
 	HandleError(e error, resp interface{}, request CompiledRequest,  xchgCtx, ctx map[string]interface{}, defaultErrorHandler ErrorHandler)
 	ProcessRequest(xchgCtx, ctx map[string]interface{})
 	ProcessResponse(response interface{}, xchgCtx, ctx map[string]interface{})
+	String() string
 }
 
 // ExecutionRequestProcessor performs any tranformations/logging etc before a request is sent.

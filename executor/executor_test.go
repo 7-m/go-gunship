@@ -18,7 +18,9 @@ func Test_defaultHanlder(t *testing.T) {
 	mock := &mock{}
 	defaultHandler := &defaultErrorHanlder{}
 	req := &execution.HttpCompiledRequest{}
-	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler)
+	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler, func(m map[string]interface{}) {
+		// no-op
+	})
 
 }
 
@@ -34,20 +36,21 @@ func Test_requestHandler(t *testing.T) {
 	req := &execution.HttpCompiledRequest{
 		ErrorHandler: mock,
 	}
-	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler)
+	Execute([]gunship.CompiledRequest{req}, mock, nil, nil, defaultHandler, func(m map[string]interface{}) {
+		// no-op
+	})
 }
 
 // default error handler
 type defaultErrorHanlder struct{}
 
-func (d *defaultErrorHanlder) HandleError(e error, response interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+func (d defaultErrorHanlder) HandleError(e error, response interface{}, req gunship.CompiledRequest, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
 	panic(e)
 }
 
 type mock struct{}
 
-// request error handler
-func (m *mock) HandleError(e error, respnse interface{}, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
+func (m *mock) HandleError(e error, response interface{}, req gunship.CompiledRequest, xchgCtx, ctx map[string]interface{}, defaultErrorHandler gunship.ErrorHandler) {
 	panic(fmt.Errorf("something went wrong: " + e.Error()))
 }
 

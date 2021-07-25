@@ -10,13 +10,16 @@ type Exchanger interface {
 	Exchange(request gunship.CompiledRequest) (interface{}, error)
 }
 
+type SessionCtxCustomizer func(map[string]interface{})
+
 func Execute(compiledRequests []gunship.CompiledRequest, exchanger Exchanger,
 	preConcerns []gunship.ExecutionRequestProcessor, postConcerns []gunship.ExecutionResponseProcessor,
-	defaultHandler gunship.ErrorHandler) {
+	defaultHandler gunship.ErrorHandler, sessionCtxCustomizer SessionCtxCustomizer) {
 	sessionCtx := map[string]interface{}{}
 
 	// todo add ctx init to method
 	sessionCtx["template"] = map[string]string{}
+	sessionCtxCustomizer(sessionCtx)
 
 	for _, e := range compiledRequests {
 
@@ -46,7 +49,7 @@ type ExchangerFactory func() Exchanger
 
 func ExecuteParallel(compiledRequests []gunship.CompiledRequest, getHttpExchanger ExchangerFactory,
 	preConcerns []gunship.ExecutionRequestProcessor, postConcerns []gunship.ExecutionResponseProcessor,
-	parallelism int, defaultHandler gunship.ErrorHandler) {
+	parallelism int, defaultHandler gunship.ErrorHandler, customizer SessionCtxCustomizer) {
 
 	group := sync.WaitGroup{}
 	for i := 0; i < parallelism; i++ {
@@ -59,7 +62,7 @@ func ExecuteParallel(compiledRequests []gunship.CompiledRequest, getHttpExchange
 				}
 			}()
 			log.Printf("--started-----")
-			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns, defaultHandler)
+			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns, defaultHandler, customizer)
 
 		}()
 

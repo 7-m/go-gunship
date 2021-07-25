@@ -1,6 +1,7 @@
 package response_processors
 
 import (
+	"encoding/gob"
 	"encoding/json"
 	"github.com/tidwall/gjson"
 	"gunship/utils"
@@ -9,6 +10,9 @@ import (
 	"strings"
 )
 
+func init() {
+	gob.Register(&extractor{})
+}
 type extractor struct {
 }
 

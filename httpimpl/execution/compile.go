@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"gunship"
 	"gunship/utils"
 	"io/ioutil"
@@ -149,6 +150,10 @@ func (this *HttpCompiledRequest) ToJson() string {
 		panic("error  converting to json")
 	}
 	return string(str)
+}
+
+func (this *HttpCompiledRequest) String() string {
+	return fmt.Sprintf("%v %v\n%v\nQuery:%v\nHeaders:%v\nBody:\n%v\n",this.Method, this.BaseUrl, this.Path, this.Query,this.Headers, this.Body)
 }
 
 func CompiledRequestsToJson(compiledrequests []gunship.CompiledRequest) []byte {

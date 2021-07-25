@@ -12,7 +12,7 @@ func TestAnyTemplater_ProcessRequest(t *testing.T) {
 	ctx := map[string]map[string]string{"personId": {"42": "id0"}}
 	anyTemplater.ProcessRequest(exchanges[2].Request, ctx)
 
-	if exchanges[2].Request.Path != "/api/v1/person/{id0}" {
+	if exchanges[2].Request.Path != "/api/v1/person/${id0}" {
 		t.Fail()
 	}
 

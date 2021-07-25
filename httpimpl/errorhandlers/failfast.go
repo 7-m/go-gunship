@@ -15,7 +15,7 @@ func (f *FailFastErrorHandler) HandleError(e error, response interface{}, reques
 		panic(e)
 	}
 	if resp.StatusCode == 500 {
-		panic(fmt.Sprintf("Request %v Response %v", request, response))
+		panic(fmt.Sprintf("Request\n %v Response %v", request, response))
 	}
 }
 
