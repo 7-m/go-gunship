@@ -2,6 +2,7 @@ package execution
 
 import (
 	"gunship"
+	"math/rand"
 	"net/http"
 	"time"
 )
@@ -30,7 +31,7 @@ func (h *httpExchanger) Exchange(request gunship.CompiledRequest,
 			return do, err
 		}
 		// timeout to prevent overloading
-		time.Sleep(1 * time.Second)
+		time.Sleep(time.Duration(rand.Float32() * 10) * time.Second)
 	}
 	xchngCtx["attempts"] = attempt
 	return do, err
