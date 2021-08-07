@@ -7,7 +7,7 @@ import (
 )
 
 type Exchanger interface {
-	Exchange(request gunship.CompiledRequest) (interface{}, error)
+	Exchange(request gunship.CompiledRequest, xchngCtx map[string]interface{}, sessionCtx map[string]interface{}) (interface{}, error)
 }
 
 type SessionCtxCustomizer func(map[string]interface{})
@@ -31,7 +31,7 @@ func Execute(compiledRequests []gunship.CompiledRequest, exchanger Exchanger,
 			b.ProcessRequest(reqCpy, xchng, sessionCtx)
 		}
 
-		response, err := exchanger.Exchange(reqCpy)
+		response, err := exchanger.Exchange(reqCpy, xchng, sessionCtx)
 
 		reqCpy.HandleError(err, response, reqCpy, xchng, sessionCtx, defaultHandler)
 
@@ -61,7 +61,7 @@ func ExecuteParallel(compiledRequests []gunship.CompiledRequest, getHttpExchange
 					log.Printf("user stopped after error %v", err)
 				}
 			}()
-			log.Printf("--started-----")
+			// log.Printf("--started-----")
 			Execute(compiledRequests, getHttpExchanger(), preConcerns, postConcerns, defaultHandler, customizer)
 
 		}()

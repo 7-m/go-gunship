@@ -3,6 +3,7 @@ package execution
 import (
 	"gunship"
 	"net/http"
+	"time"
 )
 
 type httpExchanger struct {
@@ -13,7 +14,24 @@ func NewHttpExchanger(client *http.Client) *httpExchanger {
 	return &httpExchanger{client: client}
 }
 
-func (h *httpExchanger) Exchange(request gunship.CompiledRequest) (interface{}, error) {
-	r := request.(*HttpCompiledRequest)
-	return h.client.Do(r.ToHttpRequest())
+func (h *httpExchanger) Exchange(request gunship.CompiledRequest,
+	xchngCtx map[string]interface{},
+	sessionCtx map[string]interface{}) (interface{}, error) {
+
+	var do *http.Response
+	var err error
+
+	attempt :=1
+	for ;  attempt <= 10 ; attempt++{
+		r := request.(*HttpCompiledRequest)
+		do, err = h.client.Do(r.ToHttpRequest())
+		if err == nil && do.StatusCode != 500{
+			xchngCtx["attempts"] = attempt
+			return do, err
+		}
+		// timeout to prevent overloading
+		time.Sleep(1 * time.Second)
+	}
+	xchngCtx["attempts"] = attempt
+	return do, err
 }
